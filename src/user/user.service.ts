@@ -30,7 +30,11 @@ export class UserService {
     });
     return 'User created successfully';
   }
-
+  async findOne(email: string): Promise<User | undefined> {
+    return this.userModel.findOne({
+      where: { email: email },
+    });
+  }
   async login(email: string, password: string) {
     const user = await this.userModel.findOne({
       where: { email: email },
