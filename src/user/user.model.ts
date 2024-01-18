@@ -1,4 +1,5 @@
-import { Column, Model, Table } from 'sequelize-typescript';
+import { Column, HasMany, Model, Table } from 'sequelize-typescript';
+import { Task, TaskAssignment } from 'src/task/task.model';
 
 @Table({
   timestamps: false,
@@ -26,4 +27,7 @@ export class User extends Model {
 
   @Column
   updated_at: Date;
+
+  @HasMany(() => TaskAssignment, 'user_id')
+  tasks: Task[];
 }

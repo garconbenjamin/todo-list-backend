@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { InjectModel } from '@nestjs/sequelize';
@@ -17,7 +17,7 @@ export class UserService {
     });
 
     if (user) {
-      return 'Email already exists';
+      throw new HttpException('Email already exists', 400);
     }
     const saltOrRounds = 10;
     const password = createUser.password;

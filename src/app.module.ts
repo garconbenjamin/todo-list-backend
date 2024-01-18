@@ -5,6 +5,8 @@ import { UserModule } from './user/user.module';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { User } from './user/user.model';
 import { AuthModule } from './auth/auth.module';
+import { TaskModule } from './task/task.module';
+import { Task, TaskAssignment } from './task/task.model';
 
 @Module({
   imports: [
@@ -16,9 +18,10 @@ import { AuthModule } from './auth/auth.module';
       username: 'root',
       password: 'root',
       database: 'root',
-      models: [User],
+      models: [User, Task, TaskAssignment],
     }),
     AuthModule,
+    TaskModule,
   ],
   controllers: [AppController],
   providers: [AppService],
