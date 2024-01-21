@@ -1,10 +1,10 @@
-import { Column, HasMany, Model, Table } from 'sequelize-typescript';
-import { Task, TaskAssignment } from 'src/task/task.model';
+import { Column, Model, Table } from 'sequelize-typescript';
 
 @Table({
   timestamps: false,
   freezeTableName: true,
   tableName: 'user',
+  underscored: false,
 })
 export class User extends Model {
   @Column({
@@ -23,11 +23,11 @@ export class User extends Model {
   password: string;
 
   @Column
-  created_at: Date;
+  groupId: number;
 
   @Column
-  updated_at: Date;
+  createdAt: Date;
 
-  @HasMany(() => TaskAssignment, 'user_id')
-  tasks: Task[];
+  @Column
+  updatedAt: Date;
 }

@@ -1,13 +1,16 @@
 import { Module } from '@nestjs/common';
 import { TaskService } from './task.service';
-import { TaskController } from './task.controller';
-import { SequelizeModule } from '@nestjs/sequelize';
-import { Task, TaskAssignment } from './task.model';
+import { TaskResolver } from './task.resolver';
+import { Task, TaskFollow } from './task.model';
 import { User } from 'src/user/user.model';
-
+import { SequelizeModule } from '@nestjs/sequelize';
+import { UserService } from 'src/user/user.service';
+import { CacheModule } from '@nestjs/cache-manager';
 @Module({
-  controllers: [TaskController],
-  providers: [TaskService],
-  imports: [SequelizeModule.forFeature([Task, TaskAssignment, User])],
+  providers: [TaskResolver, TaskService, UserService],
+  imports: [
+    SequelizeModule.forFeature([Task, User, TaskFollow]),
+    CacheModule.register(),
+  ],
 })
 export class TaskModule {}

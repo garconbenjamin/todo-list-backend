@@ -5,6 +5,7 @@ import { User } from 'src/user/user.model';
   timestamps: false,
   freezeTableName: true,
   tableName: 'task',
+  underscored: false,
 })
 export class Task extends Model {
   @Column({
@@ -19,28 +20,42 @@ export class Task extends Model {
   @Column
   description: string;
 
-  @Column
-  creator_id: number;
+  @Column({
+    allowNull: false,
+  })
+  creatorId!: number;
 
   @Column
-  due_time: Date;
+  groupId: number;
 
   @Column
-  created_at: Date;
+  parentId: number;
 
   @Column
-  updated_at: Date;
+  assigneeId: number;
 
-  @BelongsTo(() => User, 'creator_id')
+  @Column
+  startTime: Date;
+
+  @Column
+  dueTime: Date;
+
+  @Column
+  createdAt: Date;
+
+  @Column
+  updatedAt: Date;
+
+  @BelongsTo(() => User, 'creatorId')
   creator: User;
 }
 
 @Table({
   timestamps: false,
   freezeTableName: true,
-  tableName: 'task_assignment',
+  tableName: 'taskFollow',
 })
-export class TaskAssignment extends Model {
+export class TaskFollow extends Model {
   @Column({
     primaryKey: true,
     autoIncrement: true,
@@ -48,20 +63,45 @@ export class TaskAssignment extends Model {
   id: number;
 
   @Column
-  user_id: number;
+  userId: number;
 
   @Column
-  task_id: number;
+  taskId: number;
 
   @Column
-  created_at: Date;
+  createdAt: Date;
 
   @Column
-  updated_at: Date;
+  updatedAt: Date;
 
-  @BelongsTo(() => User, 'user_id')
+  @BelongsTo(() => User, 'userId')
   user: User;
 
-  @BelongsTo(() => Task, 'task_id')
+  @BelongsTo(() => Task, 'taskId')
   task: Task;
+}
+
+@Table({
+  timestamps: false,
+  freezeTableName: true,
+  tableName: 'taskLog',
+})
+export class TaskLog extends Model<TaskLog> {
+  @Column
+  userId: number;
+
+  @Column
+  action: string;
+
+  @Column
+  status: string;
+
+  @Column
+  taskId: number;
+
+  @Column
+  createdAt: Date;
+
+  @Column
+  updatedAt: Date;
 }

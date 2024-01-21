@@ -1,82 +1,91 @@
 import { Injectable } from '@nestjs/common';
-import { CreateTaskDto } from './dto/create-task.dto';
-import { UpdateTaskDto } from './dto/update-task.dto';
+import { CreateTaskInput, FollowTaskInput, UpdateTaskInput } from './dto';
+
 import { InjectModel } from '@nestjs/sequelize';
-import { Task, TaskAssignment } from './task.model';
+import { Task, TaskFollow } from './task.model';
 import { User } from '../user/user.model';
 @Injectable()
 export class TaskService {
   constructor(
     @InjectModel(Task)
     private taskModel: typeof Task,
-    @InjectModel(TaskAssignment)
-    private taskAssignmentModel: typeof TaskAssignment,
+
     @InjectModel(User)
     private userModel: typeof User,
+    @InjectModel(TaskFollow)
+    private taskFollowModel: typeof TaskFollow,
   ) {}
-  async create(createTaskDto: CreateTaskDto) {
-    const { title, description, due_time, creator_id } = createTaskDto;
-    const task = await this.taskModel.create({
+
+  create(input: CreateTaskInput) {
+    const { title, description, startTime, dueTime, creatorId, parentId } =
+      input;
+    return this.taskModel.create({
       title,
       description,
-      due_time,
-      creator_id,
+      startTime,
+      dueTime,
+      parentId,
+      creatorId,
     });
-    return task;
   }
-  async assign(assignTaskDto: any) {
-    const { user_id, task_id } = assignTaskDto;
-    const task = await this.taskModel.findOne({
-      where: { id: task_id },
-    });
-    if (!task) {
-      return 'Task does not exist';
-    }
-    const user = await this.userModel.findOne({
-      where: { id: user_id },
-    });
-    if (!user) {
-      return 'User does not exist';
-    }
-    await this.taskAssignmentModel.create({
-      task_id,
-      user_id,
-    });
-
+  async assignTask(assignTaskDto: any) {
+    const { userId, taskId } = assignTaskDto;
+    await this.taskModel.update(
+      { assigneeId: userId },
+      { where: { id: taskId } },
+    );
     return 'Task assigned successfully';
   }
+  async followTask(followTaskInput: FollowTaskInput) {
+    const { userId, taskId } = followTaskInput;
+    const [data] = await this.taskFollowModel.findOrCreate({
+      where: { userId, taskId },
+    });
 
-  async getAssignmentsByUserId(user_id: number) {
-    const assignments = await this.taskAssignmentModel.findAll({
-      where: { user_id },
+    return data.dataValues;
+  }
+  async unfollowTask(followTaskInput: FollowTaskInput) {
+    const { userId, taskId } = followTaskInput;
+    await this.taskFollowModel.destroy({ where: { userId, taskId } });
+    return 'Task unfollowed successfully';
+  }
+  getAssignmentsByUserId(userId: number) {
+    return this.taskModel.findAll({
+      where: { userId },
+    });
+  }
+
+  getFollowersByTaskId(taskId: number) {
+    return this.taskFollowModel.findAll({
+      where: { taskId },
+    });
+  }
+  getFollowTaskByUserId(userId: number) {
+    return this.taskFollowModel.findAll({
+      where: { userId },
       include: [
         {
           model: Task,
           as: 'task',
-          attributes: ['id', 'title', 'description', 'due_time'],
-          include: [
-            {
-              model: User,
-              as: 'creator',
-              attributes: ['id', 'name'],
-            },
-          ],
+          attributes: ['id', 'title', 'description', 'dueTime', 'createdAt'],
         },
       ],
     });
-    return assignments;
   }
 
-  findAll() {
-    return `This action returns all task`;
+  findAll(where: Pick<Task, 'groupId'>) {
+    return this.taskModel.findAll({ where });
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} task`;
+    return this.taskModel.findByPk(id);
   }
 
-  update(id: number, updateTaskDto: UpdateTaskDto) {
-    return `This action updates a #${id} task`;
+  update(updateTaskInput: UpdateTaskInput) {
+    return this.taskModel.update(
+      { ...updateTaskInput },
+      { where: { id: updateTaskInput.id } },
+    );
   }
 
   remove(id: number) {

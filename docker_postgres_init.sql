@@ -1,0 +1,50 @@
+CREATE TABLE "user"
+(
+    "id" SERIAL PRIMARY KEY,
+    "name" VARCHAR(255) NOT NULL,
+    "email" VARCHAR(255) NOT NULL,
+    "password" VARCHAR(255) NOT NULL,
+    "groupId" INTEGER DEFAULT 0,
+    "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE "group"
+(
+    "id" SERIAL PRIMARY KEY,
+    "name" VARCHAR(255) NOT NULL,
+    "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE "task"
+(
+    "id" SERIAL PRIMARY KEY,
+    "title" VARCHAR(255) NOT NULL,
+    "description" TEXT,
+    "startTime" TIMESTAMP,
+    "dueTime" TIMESTAMP,
+    "creatorId"
+        INTEGER NOT NULL,
+    "assigneeId" INTEGER,
+    "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE "taskFollow"
+(
+    "id" SERIAL PRIMARY KEY,
+    "taskId" INTEGER REFERENCES "task"(id) NOT NULL,
+    "userId" INTEGER REFERENCES "user"(id) NOT NULL,
+    "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE "taskLog"
+(
+    "id" SERIAL PRIMARY KEY,
+    "userId" INTEGER,
+    "action" VARCHAR(255),
+    "status" VARCHAR(255),
+    "taskId" INTEGER,
+    "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
