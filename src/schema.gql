@@ -48,7 +48,7 @@ type Mutation {
   assignTask(assignTaskInput: AssignTaskInput!): String!
   followTask(followTaskInput: FollowTaskInput!): TaskFollower!
   unfollowTask(unfollowTaskInput: FollowTaskInput!): String
-  updateTask(updateTaskInput: UpdateTaskInput!): Task!
+  updateTask(updateTaskInput: UpdateTaskInput!): String!
   removeTask(id: Int!): Task!
 }
 

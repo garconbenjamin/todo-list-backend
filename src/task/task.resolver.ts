@@ -6,6 +6,7 @@ import {
   Int,
   Parent,
   ResolveField,
+  Context,
 } from '@nestjs/graphql';
 import { TaskService } from './task.service';
 import { Task, TaskFollower } from './entities';
@@ -16,14 +17,17 @@ import {
   UpdateTaskInput,
   FollowTaskInput,
 } from './dto';
-import { Inject } from '@nestjs/common';
+import { Inject, UseGuards } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { AuthGuard } from 'src/auth/auth.guard';
 @Resolver(() => Task)
 export class TaskResolver {
   constructor(
     private readonly taskService: TaskService,
     private readonly userService: UserService,
+    @Inject(AuthGuard)
+    private readonly authGuard: AuthGuard,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
@@ -57,9 +61,21 @@ export class TaskResolver {
     return this.taskService.findOne(id);
   }
 
-  @Mutation(() => Task)
-  updateTask(@Args('updateTaskInput') updateTaskInput: UpdateTaskInput) {
-    return this.taskService.update(updateTaskInput);
+  @Mutation(() => String)
+  @UseGuards(AuthGuard)
+  async updateTask(
+    @Args('updateTaskInput') updateTaskInput: UpdateTaskInput,
+    @Context() context: any,
+  ) {
+    const { groupId: groupIdCtx } = context.req;
+    const groupId =
+      updateTaskInput.groupId ||
+      (await this.taskService.findOne(updateTaskInput.id))?.groupId;
+
+    if (groupIdCtx !== groupId)
+      throw new Error('You are not allowed to update this task');
+    await this.taskService.update(updateTaskInput);
+    return 'Task updated successfully';
   }
 
   @Mutation(() => Task)

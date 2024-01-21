@@ -6,11 +6,14 @@ import { User } from 'src/user/user.model';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { UserService } from 'src/user/user.service';
 import { CacheModule } from '@nestjs/cache-manager';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthModule } from 'src/auth/auth.module';
 @Module({
-  providers: [TaskResolver, TaskService, UserService],
+  providers: [AuthGuard, TaskResolver, TaskService, UserService],
   imports: [
     SequelizeModule.forFeature([Task, User, TaskFollow]),
     CacheModule.register(),
+    AuthModule,
   ],
 })
 export class TaskModule {}
