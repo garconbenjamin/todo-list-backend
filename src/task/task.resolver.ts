@@ -11,12 +11,7 @@ import {
 import { TaskService } from './task.service';
 import { Task, TaskFollower } from './entities';
 import { UserService } from 'src/user/user.service';
-import {
-  AssignTaskInput,
-  CreateTaskInput,
-  UpdateTaskInput,
-  FollowTaskInput,
-} from './dto';
+import { CreateTaskInput, UpdateTaskInput, FollowTaskInput } from './dto';
 import { Inject, UseGuards } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
@@ -34,11 +29,6 @@ export class TaskResolver {
   @Mutation(() => Task)
   createTask(@Args('createTaskInput') createTaskInput: CreateTaskInput) {
     return this.taskService.create(createTaskInput);
-  }
-
-  @Mutation(() => String)
-  assignTask(@Args('assignTaskInput') assignTaskInput: AssignTaskInput) {
-    return this.taskService.assignTask(assignTaskInput);
   }
 
   @Mutation(() => TaskFollower)

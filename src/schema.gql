@@ -37,25 +37,18 @@ type TaskFollower {
 }
 
 type Query {
-  getUsersByGroup(groupId: Int!): [User!]!
   getAllTasksByGroup(groupId: Int!): [Task!]!
   task(id: Int!): Task!
+  getUsersByGroup(groupId: Int!): [User!]!
 }
 
 type Mutation {
-  createUser(createUserInput: CreateUserInput!): String!
   createTask(createTaskInput: CreateTaskInput!): Task!
-  assignTask(assignTaskInput: AssignTaskInput!): String!
   followTask(followTaskInput: FollowTaskInput!): TaskFollower!
   unfollowTask(unfollowTaskInput: FollowTaskInput!): String
   updateTask(updateTaskInput: UpdateTaskInput!): String!
   removeTask(id: Int!): Task!
-}
-
-input CreateUserInput {
-  name: String!
-  email: String!
-  password: String!
+  createUser(createUserInput: CreateUserInput!): String!
 }
 
 input CreateTaskInput {
@@ -66,11 +59,6 @@ input CreateTaskInput {
   parentId: Float
   creatorId: Int!
   groupId: Int!
-}
-
-input AssignTaskInput {
-  taskId: Int!
-  userId: Int!
 }
 
 input FollowTaskInput {
@@ -88,4 +76,10 @@ input UpdateTaskInput {
   groupId: Int
   id: Int!
   assigneeId: Float
+}
+
+input CreateUserInput {
+  name: String!
+  email: String!
+  password: String!
 }

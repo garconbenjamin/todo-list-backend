@@ -35,12 +35,9 @@ export class UpdateTaskInput extends PartialType(CreateTaskInput) {
 }
 
 @InputType()
-export class AssignTaskInput {
+export class FollowTaskInput {
   @Field(() => Int)
   taskId: number;
   @Field(() => Int)
   userId: number;
 }
-
-@InputType()
-export class FollowTaskInput extends AssignTaskInput {}
