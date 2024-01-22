@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
+import { HttpException, Injectable } from '@nestjs/common';
+import { CreateUserInput } from './dto';
 import * as bcrypt from 'bcrypt';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './user.model';
@@ -11,13 +11,13 @@ export class UserService {
     private userModel: typeof User,
   ) {}
 
-  async create(createUser: CreateUserDto) {
+  async create(createUser: CreateUserInput) {
     const user = await this.userModel.findOne({
       where: { email: createUser.email },
     });
 
     if (user) {
-      return 'Email already exists';
+      throw new HttpException('Email already exists', 400);
     }
     const saltOrRounds = 10;
     const password = createUser.password;
@@ -30,10 +30,19 @@ export class UserService {
     });
     return 'User created successfully';
   }
-
+  async findOne(where: Partial<User>): Promise<User | undefined> {
+    return this.userModel.findOne({
+      where,
+    });
+  }
+  async findAll(where: Partial<User>) {
+    return this.userModel.findAll({
+      where,
+    });
+  }
   async login(email: string, password: string) {
     const user = await this.userModel.findOne({
-      where: { email: email },
+      where: { email },
     });
 
     if (!user) {

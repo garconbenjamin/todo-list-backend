@@ -4,6 +4,7 @@ import { Column, Model, Table } from 'sequelize-typescript';
   timestamps: false,
   freezeTableName: true,
   tableName: 'user',
+  underscored: false,
 })
 export class User extends Model {
   @Column({
@@ -22,8 +23,11 @@ export class User extends Model {
   password: string;
 
   @Column
-  created_at: Date;
+  groupId: number;
 
   @Column
-  updated_at: Date;
+  createdAt: Date;
+
+  @Column
+  updatedAt: Date;
 }
