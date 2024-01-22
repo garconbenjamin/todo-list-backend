@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CreateTaskInput, FollowTaskInput, UpdateTaskInput } from './dto';
+import { CreateTaskInput, UpdateTaskInput } from './dto';
 
 import { InjectModel } from '@nestjs/sequelize';
-import { Task, TaskFollow, TaskLog } from './task.model';
+import { Task, TaskLog } from './task.model';
 import { User } from '../user/user.model';
 
 @Injectable()
@@ -12,8 +12,7 @@ export class TaskService {
     private taskModel: typeof Task,
     @InjectModel(User)
     private userModel: typeof User,
-    @InjectModel(TaskFollow)
-    private taskFollowModel: typeof TaskFollow,
+
     @InjectModel(TaskLog)
     private taskLogModel: typeof TaskLog,
   ) {}
@@ -31,40 +30,9 @@ export class TaskService {
     });
   }
 
-  async followTask(followTaskInput: FollowTaskInput) {
-    const { userId, taskId } = followTaskInput;
-    const [data] = await this.taskFollowModel.findOrCreate({
-      where: { userId, taskId },
-    });
-
-    return data.dataValues;
-  }
-  async unfollowTask(followTaskInput: FollowTaskInput) {
-    const { userId, taskId } = followTaskInput;
-    await this.taskFollowModel.destroy({ where: { userId, taskId } });
-    return 'Task unfollowed successfully';
-  }
   getAssignmentsByUserId(userId: number) {
     return this.taskModel.findAll({
       where: { userId },
-    });
-  }
-
-  getFollowersByTaskId(taskId: number) {
-    return this.taskFollowModel.findAll({
-      where: { taskId },
-    });
-  }
-  getFollowTaskByUserId(userId: number) {
-    return this.taskFollowModel.findAll({
-      where: { userId },
-      include: [
-        {
-          model: Task,
-          as: 'task',
-          attributes: ['id', 'title', 'description', 'dueTime', 'createdAt'],
-        },
-      ],
     });
   }
 

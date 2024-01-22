@@ -8,20 +8,20 @@ import { User } from './user/user.model';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
-
+import { dbConfig } from './config';
 import { TaskModule } from './task/task.module';
-import { Task, TaskFollow, TaskLog } from './task/task.model';
+import { Task, TaskLog } from './task/task.model';
+
 @Module({
   imports: [
     SequelizeModule.forRoot({
-      dialect: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'root',
-      password: 'root',
-      database: 'root',
-      models: [User, Task, TaskFollow, TaskLog],
-      logging: false,
+      dialect: dbConfig.dialect,
+      host: dbConfig.host,
+      port: dbConfig.port,
+      username: dbConfig.username,
+      password: dbConfig.password,
+      database: dbConfig.database,
+      models: [User, Task, TaskLog],
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,

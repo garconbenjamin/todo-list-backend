@@ -86,37 +86,6 @@ export class Task extends Model {
 @Table({
   timestamps: false,
   freezeTableName: true,
-  tableName: 'taskFollow',
-})
-export class TaskFollow extends Model {
-  @Column({
-    primaryKey: true,
-    autoIncrement: true,
-  })
-  id: number;
-
-  @Column
-  userId: number;
-
-  @Column
-  taskId: number;
-
-  @Column
-  createdAt: Date;
-
-  @Column
-  updatedAt: Date;
-
-  @BelongsTo(() => User, 'userId')
-  user: User;
-
-  @BelongsTo(() => Task, 'taskId')
-  task: Task;
-}
-
-@Table({
-  timestamps: false,
-  freezeTableName: true,
   tableName: 'taskLog',
 })
 export class TaskLog extends Model<TaskLog> {

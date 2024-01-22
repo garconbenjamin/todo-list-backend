@@ -9,9 +9,9 @@ import {
   Context,
 } from '@nestjs/graphql';
 import { TaskService } from './task.service';
-import { Task, TaskFollower, TaskLog } from './entities';
+import { Task, TaskLog } from './entities';
 import { UserService } from 'src/user/user.service';
-import { CreateTaskInput, UpdateTaskInput, FollowTaskInput } from './dto';
+import { CreateTaskInput, UpdateTaskInput } from './dto';
 import { Inject, UseGuards } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
@@ -32,16 +32,6 @@ export class TaskResolver {
     return this.taskService.create(createTaskInput);
   }
 
-  @Mutation(() => TaskFollower)
-  followTask(@Args('followTaskInput') followTaskInput: FollowTaskInput) {
-    const { taskId, userId } = followTaskInput;
-    return this.taskService.followTask({ taskId, userId });
-  }
-
-  @Mutation(() => String, { nullable: true })
-  unfollowTask(@Args('unfollowTaskInput') followTaskInput: FollowTaskInput) {
-    return this.taskService.unfollowTask(followTaskInput);
-  }
   @Query(() => [Task])
   getAllTasksByGroup(@Args('groupId', { type: () => Int }) groupId: number) {
     return this.taskService.findAll({ groupId });
@@ -98,10 +88,6 @@ export class TaskResolver {
     return user;
   }
 
-  @ResolveField()
-  followers(@Parent() task: Task) {
-    return this.taskService.getFollowersByTaskId(task.id);
-  }
   @ResolveField()
   follower(@Parent() task: Task) {
     return this.userService.findOne({ id: task.followerId });

@@ -48,9 +48,6 @@ export class Task {
   @Field({ nullable: true })
   creator?: User;
 
-  @Field(() => [TaskFollower], { nullable: true })
-  followers?: TaskFollower[];
-
   @Field(() => User, { nullable: true })
   assignee?: User;
 

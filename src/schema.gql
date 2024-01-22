@@ -27,17 +27,8 @@ type Task {
   createdAt: String
   updatedAt: String
   creator: User
-  followers: [TaskFollower!]
   assignee: User
   follower: User
-}
-
-type TaskFollower {
-  id: Float
-  taskId: Float
-  userId: Float
-  createdAt: String
-  updatedAt: String
 }
 
 type TaskLog {
@@ -61,8 +52,6 @@ type Query {
 
 type Mutation {
   createTask(createTaskInput: CreateTaskInput!): Task!
-  followTask(followTaskInput: FollowTaskInput!): TaskFollower!
-  unfollowTask(unfollowTaskInput: FollowTaskInput!): String
   updateTask(updateTaskInput: UpdateTaskInput!): String!
   removeTask(id: Int!): Task!
   createUser(createUserInput: CreateUserInput!): String!
@@ -76,11 +65,6 @@ input CreateTaskInput {
   parentId: Float
   creatorId: Int!
   groupId: Int!
-}
-
-input FollowTaskInput {
-  taskId: Int!
-  userId: Int!
 }
 
 input UpdateTaskInput {

@@ -24,8 +24,12 @@ CREATE TABLE "task"
     "dueTime" TIMESTAMP,
     "creatorId"
         INTEGER NOT NULL,
+    "updatedBy" INTEGER,
     "assigneeId" INTEGER,
     "followerId" INTEGER,
+    "parentId" INTEGER,
+    "groupId" INTEGER NOT NULL DEFAULT 0,
+    "status" INTEGER DEFAULT 1,
     "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -49,3 +53,10 @@ CREATE TABLE "taskLog"
     "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+INSERT INTO "user"
+    ("name", "email", "password")
+VALUES('Mark', 'mark@gmail.com', '$2b$10$FljRdZUMVPY/fopDx.iS2.mOOlE31b0SmkiciN5fi2bsPbx0vv2FC');
+INSERT INTO "user"
+    ("name", "email", "password")
+VALUES('Jenny', 'jenny@gmail.com', '$2b$10$FljRdZUMVPY/fopDx.iS2.mOOlE31b0SmkiciN5fi2bsPbx0vv2FC');
