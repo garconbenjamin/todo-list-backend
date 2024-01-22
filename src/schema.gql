@@ -56,7 +56,7 @@ type Query {
   task(id: Int!): Task!
   taskLogs(taskId: Int!): [TaskLog!]!
   getUsersByGroup(groupId: Int!): [User!]!
-  user(id: Int!): User!
+  user(email: String!): User!
 }
 
 type Mutation {
