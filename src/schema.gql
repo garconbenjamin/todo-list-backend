@@ -21,6 +21,7 @@ type Task {
   assigneeId: Float
   groupId: Float
   parentId: Float
+  updatedBy: Float
   createdAt: String
   updatedAt: String
   creator: User

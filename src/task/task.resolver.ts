@@ -16,6 +16,7 @@ import { Inject, UseGuards } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { AuthGuard } from 'src/auth/auth.guard';
+
 @Resolver(() => Task)
 export class TaskResolver {
   constructor(
@@ -78,10 +79,6 @@ export class TaskResolver {
     return this.taskService.remove(id);
   }
 
-  @Query(() => [TaskLog])
-  taskLog(@Args('taskId', { type: () => Int }) taskId: number) {
-    return this.taskService.getTaskLogByTaskId(taskId);
-  }
   //resolver types
   @ResolveField()
   async creator(@Parent() task: Task) {
@@ -101,5 +98,22 @@ export class TaskResolver {
   @ResolveField()
   followers(@Parent() task: Task) {
     return this.taskService.getFollowersByTaskId(task.id);
+  }
+}
+@Resolver(() => TaskLog)
+export class TaskLogResolver {
+  constructor(
+    private readonly taskService: TaskService,
+    private readonly userService: UserService,
+  ) {}
+
+  @Query(() => [TaskLog])
+  taskLog(@Args('taskId', { type: () => Int }) taskId: number) {
+    console.log('taskId', taskId);
+    return this.taskService.getTaskLogByTaskId(taskId);
+  }
+  @ResolveField()
+  async user(@Parent() taskLog: TaskLog) {
+    return this.userService.findOne({ id: taskLog.userId });
   }
 }

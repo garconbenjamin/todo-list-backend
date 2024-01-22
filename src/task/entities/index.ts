@@ -31,6 +31,9 @@ export class Task {
   parentId?: number;
 
   @Field({ nullable: true })
+  updatedBy?: number;
+
+  @Field({ nullable: true })
   createdAt?: string;
 
   @Field({ nullable: true })
@@ -75,7 +78,7 @@ export class TaskLog {
   @Field({ nullable: true })
   userId: number;
 
-  @Field({ nullable: true })
+  @Field(() => User, { nullable: true })
   user: User;
 
   @Field({ nullable: true })
