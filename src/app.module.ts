@@ -10,7 +10,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 
 import { TaskModule } from './task/task.module';
-import { Task, TaskFollow } from './task/task.model';
+import { Task, TaskFollow, TaskLog } from './task/task.model';
 @Module({
   imports: [
     SequelizeModule.forRoot({
@@ -20,7 +20,8 @@ import { Task, TaskFollow } from './task/task.model';
       username: 'root',
       password: 'root',
       database: 'root',
-      models: [User, Task, TaskFollow],
+      models: [User, Task, TaskFollow, TaskLog],
+      logging: false,
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,

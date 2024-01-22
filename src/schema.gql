@@ -36,9 +36,21 @@ type TaskFollower {
   updatedAt: String
 }
 
+type TaskLog {
+  id: Float
+  taskId: Float
+  userId: Float
+  user: User
+  action: String
+  status: String
+  createdAt: String
+  updatedAt: String
+}
+
 type Query {
   getAllTasksByGroup(groupId: Int!): [Task!]!
   task(id: Int!): Task!
+  taskLog(taskId: Int!): [TaskLog!]!
   getUsersByGroup(groupId: Int!): [User!]!
 }
 

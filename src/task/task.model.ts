@@ -1,4 +1,10 @@
-import { Column, Model, Table, BelongsTo } from 'sequelize-typescript';
+import {
+  Column,
+  Model,
+  Table,
+  BelongsTo,
+  AfterUpdate,
+} from 'sequelize-typescript';
 import { User } from 'src/user/user.model';
 
 @Table({
@@ -40,14 +46,39 @@ export class Task extends Model {
   @Column
   dueTime: Date;
 
+  @Column({ defaultValue: 1 })
+  status: number;
+
   @Column
   createdAt: Date;
 
   @Column
   updatedAt: Date;
 
+  @Column({ allowNull: false })
+  updatedBy: number;
+
   @BelongsTo(() => User, 'creatorId')
   creator: User;
+
+  @AfterUpdate
+  static logUpdate(instance: Task) {
+    const changedFields = instance.changed();
+
+    if (changedFields && changedFields.length > 0) {
+      changedFields.forEach((field) => {
+        if (field === 'assigneeId' || field === 'status') {
+          console.log('instance[field]', instance[field]);
+          TaskLog.create({
+            userId: instance.updatedBy,
+            action: field,
+            status: instance[field]?.toString() || 'Null',
+            taskId: instance.id,
+          });
+        }
+      });
+    }
+  }
 }
 
 @Table({
@@ -101,7 +132,4 @@ export class TaskLog extends Model<TaskLog> {
 
   @Column
   createdAt: Date;
-
-  @Column
-  updatedAt: Date;
 }

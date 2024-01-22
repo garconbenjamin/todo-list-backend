@@ -9,7 +9,7 @@ import {
   Context,
 } from '@nestjs/graphql';
 import { TaskService } from './task.service';
-import { Task, TaskFollower } from './entities';
+import { Task, TaskFollower, TaskLog } from './entities';
 import { UserService } from 'src/user/user.service';
 import { CreateTaskInput, UpdateTaskInput, FollowTaskInput } from './dto';
 import { Inject, UseGuards } from '@nestjs/common';
@@ -57,14 +57,19 @@ export class TaskResolver {
     @Args('updateTaskInput') updateTaskInput: UpdateTaskInput,
     @Context() context: any,
   ) {
-    const { groupId: groupIdCtx } = context.req;
+    const { userId: userIdCtx, groupId: groupIdCtx } = context.req;
     const groupId =
       updateTaskInput.groupId ||
       (await this.taskService.findOne(updateTaskInput.id))?.groupId;
 
     if (groupIdCtx !== groupId)
       throw new Error('You are not allowed to update this task');
-    await this.taskService.update(updateTaskInput);
+    await this.taskService.update(
+      {
+        ...updateTaskInput,
+      },
+      userIdCtx,
+    );
     return 'Task updated successfully';
   }
 
@@ -73,6 +78,10 @@ export class TaskResolver {
     return this.taskService.remove(id);
   }
 
+  @Query(() => [TaskLog])
+  taskLog(@Args('taskId', { type: () => Int }) taskId: number) {
+    return this.taskService.getTaskLogByTaskId(taskId);
+  }
   //resolver types
   @ResolveField()
   async creator(@Parent() task: Task) {
@@ -88,6 +97,7 @@ export class TaskResolver {
     }
     return user;
   }
+
   @ResolveField()
   followers(@Parent() task: Task) {
     return this.taskService.getFollowersByTaskId(task.id);

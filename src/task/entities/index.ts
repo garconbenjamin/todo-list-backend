@@ -63,3 +63,30 @@ export class TaskFollower {
   @Field({ nullable: true })
   updatedAt: string;
 }
+
+@ObjectType()
+export class TaskLog {
+  @Field({ nullable: true })
+  id: number;
+
+  @Field({ nullable: true })
+  taskId: number;
+
+  @Field({ nullable: true })
+  userId: number;
+
+  @Field({ nullable: true })
+  user: User;
+
+  @Field({ nullable: true })
+  action: string;
+
+  @Field({ nullable: true })
+  status: string;
+
+  @Field({ nullable: true })
+  createdAt: string;
+
+  @Field({ nullable: true })
+  updatedAt: string;
+}

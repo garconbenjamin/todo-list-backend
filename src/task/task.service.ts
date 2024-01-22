@@ -2,18 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { CreateTaskInput, FollowTaskInput, UpdateTaskInput } from './dto';
 
 import { InjectModel } from '@nestjs/sequelize';
-import { Task, TaskFollow } from './task.model';
+import { Task, TaskFollow, TaskLog } from './task.model';
 import { User } from '../user/user.model';
+
 @Injectable()
 export class TaskService {
   constructor(
     @InjectModel(Task)
     private taskModel: typeof Task,
-
     @InjectModel(User)
     private userModel: typeof User,
     @InjectModel(TaskFollow)
     private taskFollowModel: typeof TaskFollow,
+    @InjectModel(TaskLog)
+    private taskLogModel: typeof TaskLog,
   ) {}
 
   create(input: CreateTaskInput) {
@@ -28,14 +30,7 @@ export class TaskService {
       creatorId,
     });
   }
-  async assignTask(assignTaskDto: any) {
-    const { userId, taskId } = assignTaskDto;
-    await this.taskModel.update(
-      { assigneeId: userId },
-      { where: { id: taskId } },
-    );
-    return 'Task assigned successfully';
-  }
+
   async followTask(followTaskInput: FollowTaskInput) {
     const { userId, taskId } = followTaskInput;
     const [data] = await this.taskFollowModel.findOrCreate({
@@ -81,13 +76,21 @@ export class TaskService {
     return this.taskModel.findByPk(id);
   }
 
-  update(updateTaskInput: UpdateTaskInput) {
+  update(updateTaskInput: UpdateTaskInput, updatedBy: number) {
+    const { id, ...restInput } = updateTaskInput;
     return this.taskModel.update(
-      { ...updateTaskInput },
-      { where: { id: updateTaskInput.id } },
+      { ...restInput, updatedBy },
+      {
+        where: { id },
+        individualHooks: true,
+      },
     );
   }
-
+  getTaskLogByTaskId(taskId: number) {
+    return this.taskLogModel.findAll({
+      where: { taskId },
+    });
+  }
   remove(id: number) {
     return `This action removes a #${id} task`;
   }
