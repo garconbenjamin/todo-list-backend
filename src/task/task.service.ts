@@ -68,7 +68,7 @@ export class TaskService {
     });
   }
 
-  findAll(where: Pick<Task, 'groupId'>) {
+  findAll(where: Partial<Pick<Task, 'groupId' | 'parentId'>>) {
     return this.taskModel.findAll({ where });
   }
 
@@ -86,11 +86,30 @@ export class TaskService {
       },
     );
   }
-  getTaskLogByTaskId(taskId: number) {
+  getTaskLogsByTaskId(taskId: number) {
     return this.taskLogModel.findAll({
       where: { taskId },
     });
   }
+  handleCompleteParentTask = async (
+    task: Task,
+    updateTaskInput: UpdateTaskInput,
+    userIdCtx: number,
+  ) => {
+    if (task.parentId && updateTaskInput.status) {
+      const childTask = await this.findAll({
+        parentId: task.parentId,
+      });
+
+      const incompletedTask = childTask.filter(
+        (task) => task.status !== 3,
+      ).length;
+      if (incompletedTask === 0) {
+        await this.update({ id: task.parentId, status: 3 }, userIdCtx);
+      }
+    }
+  };
+
   remove(id: number) {
     return `This action removes a #${id} task`;
   }

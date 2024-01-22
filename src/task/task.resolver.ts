@@ -59,18 +59,21 @@ export class TaskResolver {
     @Context() context: any,
   ) {
     const { userId: userIdCtx, groupId: groupIdCtx } = context.req;
-    const groupId =
-      updateTaskInput.groupId ||
-      (await this.taskService.findOne(updateTaskInput.id))?.groupId;
+    const { id, ...restInput } = updateTaskInput;
+    const task = await this.taskService.findOne(id);
+    const groupId = updateTaskInput.groupId || task?.groupId;
 
     if (groupIdCtx !== groupId)
       throw new Error('You are not allowed to update this task');
-    await this.taskService.update(
-      {
-        ...updateTaskInput,
-      },
+
+    await task.update({ ...restInput, updatedBy: userIdCtx });
+
+    await this.taskService.handleCompleteParentTask(
+      task,
+      updateTaskInput,
       userIdCtx,
     );
+
     return 'Task updated successfully';
   }
 
@@ -99,6 +102,10 @@ export class TaskResolver {
   followers(@Parent() task: Task) {
     return this.taskService.getFollowersByTaskId(task.id);
   }
+  @ResolveField()
+  follower(@Parent() task: Task) {
+    return this.userService.findOne({ id: task.followerId });
+  }
 }
 @Resolver(() => TaskLog)
 export class TaskLogResolver {
@@ -108,9 +115,8 @@ export class TaskLogResolver {
   ) {}
 
   @Query(() => [TaskLog])
-  taskLog(@Args('taskId', { type: () => Int }) taskId: number) {
-    console.log('taskId', taskId);
-    return this.taskService.getTaskLogByTaskId(taskId);
+  taskLogs(@Args('taskId', { type: () => Int }) taskId: number) {
+    return this.taskService.getTaskLogsByTaskId(taskId);
   }
   @ResolveField()
   async user(@Parent() taskLog: TaskLog) {

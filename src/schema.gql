@@ -18,15 +18,18 @@ type Task {
   startTime: String
   dueTime: String
   creatorId: Float
+  followerId: Float
   assigneeId: Float
   groupId: Float
   parentId: Float
   updatedBy: Float
+  status: Float
   createdAt: String
   updatedAt: String
   creator: User
   followers: [TaskFollower!]
   assignee: User
+  follower: User
 }
 
 type TaskFollower {
@@ -51,8 +54,9 @@ type TaskLog {
 type Query {
   getAllTasksByGroup(groupId: Int!): [Task!]!
   task(id: Int!): Task!
-  taskLog(taskId: Int!): [TaskLog!]!
+  taskLogs(taskId: Int!): [TaskLog!]!
   getUsersByGroup(groupId: Int!): [User!]!
+  user(id: Int!): User!
 }
 
 type Mutation {
@@ -89,6 +93,8 @@ input UpdateTaskInput {
   groupId: Int
   id: Int!
   assigneeId: Float
+  followerId: Float
+  status: Int
 }
 
 input CreateUserInput {

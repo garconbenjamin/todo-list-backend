@@ -25,6 +25,7 @@ CREATE TABLE "task"
     "creatorId"
         INTEGER NOT NULL,
     "assigneeId" INTEGER,
+    "followerId" INTEGER,
     "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

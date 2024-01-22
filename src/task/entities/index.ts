@@ -22,6 +22,9 @@ export class Task {
   creatorId?: number;
 
   @Field({ nullable: true })
+  followerId?: number;
+
+  @Field({ nullable: true })
   assigneeId?: number;
 
   @Field({ nullable: true })
@@ -32,6 +35,9 @@ export class Task {
 
   @Field({ nullable: true })
   updatedBy?: number;
+
+  @Field({ nullable: true })
+  status?: number;
 
   @Field({ nullable: true })
   createdAt?: string;
@@ -47,6 +53,9 @@ export class Task {
 
   @Field(() => User, { nullable: true })
   assignee?: User;
+
+  @Field(() => User, { nullable: true })
+  follower?: User;
 }
 
 @ObjectType()

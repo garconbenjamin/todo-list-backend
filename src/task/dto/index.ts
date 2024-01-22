@@ -31,7 +31,11 @@ export class UpdateTaskInput extends PartialType(CreateTaskInput) {
   @Field({ nullable: true })
   assigneeId?: number;
   @Field({ nullable: true })
+  followerId?: number;
+  @Field({ nullable: true })
   dueTime?: string;
+  @Field(() => Int, { nullable: true })
+  status?: number;
 }
 
 @InputType()

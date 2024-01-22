@@ -32,6 +32,9 @@ export class Task extends Model {
   creatorId!: number;
 
   @Column
+  followerId: number;
+
+  @Column
   groupId: number;
 
   @Column
@@ -55,8 +58,8 @@ export class Task extends Model {
   @Column
   updatedAt: Date;
 
-  @Column({ allowNull: false })
-  updatedBy: number;
+  @Column
+  updatedBy?: number;
 
   @BelongsTo(() => User, 'creatorId')
   creator: User;
@@ -68,7 +71,6 @@ export class Task extends Model {
     if (changedFields && changedFields.length > 0) {
       changedFields.forEach((field) => {
         if (field === 'assigneeId' || field === 'status') {
-          console.log('instance[field]', instance[field]);
           TaskLog.create({
             userId: instance.updatedBy,
             action: field,
